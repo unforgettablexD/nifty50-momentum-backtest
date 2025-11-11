@@ -1,12 +1,11 @@
 # Nifty 50 Momentum Strategy Backtest
 
-A reproducible Jupyter notebook to download, process, and backtest a classic cross-sectional momentum strategy on India's Nifty 50 stocks using Yahoo Finance data.
 
----
 
 ## Table of Contents
 
 - [Project Overview](#project-overview)
+- [Research Motivation](#research-motivation)
 - [Data Pipeline](#data-pipeline)
 - [Strategy Logic](#strategy-logic)
 - [How to Run](#how-to-run)
@@ -19,12 +18,18 @@ A reproducible Jupyter notebook to download, process, and backtest a classic cro
 
 ## Project Overview
 
-This project demonstrates how to systematically evaluate a **momentum-based long-short equity strategy** on the Nifty 50 index. It uses monthly-adjusted close prices since 2012, robust parameterization, and clean vectorized logic for rebalancing and portfolio formation.
 
-**Goals:**
-- Build an end-to-end pipeline: from raw price data download to strategy performance visualization.
-- Showcase backtest logic that avoids lookahead bias.
-- Provide a ready template for extension to other equity universes and signals.
+This repository presents a **reproducible empirical study** of the **cross-sectional momentum anomaly** on India’s **Nifty-50** equity universe (2012–2025).  
+It follows the canonical *Jegadeesh & Titman (1993)* methodology while extending it with modern, vectorized Python backtesting and robust statistical inference.
+
+The code builds an end-to-end pipeline — from data acquisition and cleaning, through signal construction and portfolio rebalancing, to full statistical evaluation and visualization.
+
+---
+## Research Motivation
+
+Momentum remains one of the most persistent return anomalies documented in global markets.  
+While it has been extensively studied in U.S. and developed markets, its behavior in **emerging markets such as India** remains under-explored.  
+This project aims to provide a **transparent, reproducible** evaluation of whether the anomaly persists after realistic frictions.
 
 ---
 
@@ -40,7 +45,21 @@ This project demonstrates how to systematically evaluate a **momentum-based long
    - Stores the clean dataset as `nifty50_prices_monthly.csv` for reproducibility.
 
 ---
+### Methodology
 
+| Component | Description |
+|------------|--------------|
+| **Universe** | Static Nifty-50 constituents (Yahoo Finance tickers, 2012–2025) |
+| **Data** | Adjusted monthly close prices via `yfinance` |
+| **Signal** | Past cumulative return over a `formation` period, skipping last `skip` month |
+| **Portfolio** | Long top *N* and short bottom *N* stocks (long-short) or long-only variant |
+| **Weighting** | Equal or volatility-scaled |
+| **Holding Period** | Rebalanced monthly |
+| **Transaction Costs** | Modeled via proportional `tc_bps` per side |
+| **Statistics** | Annualized return/volatility, Sharpe, Sortino, max drawdown, turnover |
+| **Inference** | Newey-West HAC t-stats, bootstrap Sharpe confidence intervals |
+
+---
 ## Strategy Logic
 
 - **Momentum Signal Calculation:**  
@@ -84,6 +103,17 @@ This project demonstrates how to systematically evaluate a **momentum-based long
 ---
 
 ## Key Results & Plots
+
+### Key Findings 
+
+| Metric | Value |
+|:--|--:|
+| Annualized Return | **17.6%** |
+| Annualized Volatility | **8.3%** |
+| Sharpe Ratio | **2.12** |
+| Max Drawdown | **−12.5%** |
+| Newey-West t-stat | **3.45** |
+| Bootstrap Sharpe CI (95%) | **[1.89, 2.31]** |
 
 - **Sample Output:**  
  ![image](https://github.com/user-attachments/assets/3e1afe61-3c21-40a2-94f1-e579d778ffe8)
@@ -132,3 +162,4 @@ pip install -r requirements.txt
     - Jegadeesh, N. and Titman, S. (1993). “Returns to Buying Winners and Selling Losers: Implications for Stock Market Efficiency.” *Journal of Finance*, 48(1), 65-91.
 - Developers and maintainers of open-source libraries:  
   `pandas`, `numpy`, `yfinance`, `matplotlib`, and `tqdm`.
+
